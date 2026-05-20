@@ -1,0 +1,362 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+.rs-wrapper {
+  --indigo: #6366F1;
+  --indigo-glow: rgba(99,102,241,0.2);
+  --cyan: #06B6D4;
+  --cyan-glow: rgba(6,182,212,0.2);
+  --purple: #A855F7;
+  --purple-glow: rgba(168,85,247,0.2);
+
+  background: #060912;
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.rs-wrapper * {
+  box-sizing: border-box;
+}
+
+.rs-bg-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,0.08), transparent),
+             radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168,85,247,0.05), transparent),
+             radial-gradient(ellipse 50% 30% at 10% 70%, rgba(6,182,212,0.05), transparent);
+}
+
+.rs-noise {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.rs-page {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  gap: 0;
+}
+
+/* ─── HEADER ─── */
+.rs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  border-radius: 100px;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.25);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: rgba(180,180,255,0.8);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  animation: rs-fadeDown 0.6s ease both;
+}
+
+.rs-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #6366F1;
+  box-shadow: 0 0 8px rgba(99,102,241,0.8);
+  animation: rs-pulse 2s ease infinite;
+}
+
+@keyframes rs-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.rs-headline {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 6vw, 68px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-align: center;
+  margin-bottom: 20px;
+  animation: rs-fadeDown 0.7s 0.1s ease both;
+}
+
+.rs-headline em {
+  font-style: italic;
+  background: linear-gradient(135deg, #818CF8, #C084FC, #67E8F9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rs-subline {
+  text-align: center;
+  color: rgba(148,163,184,0.8);
+  font-size: 16px;
+  line-height: 1.7;
+  max-width: 480px;
+  font-weight: 300;
+  margin-bottom: 56px;
+  animation: rs-fadeDown 0.7s 0.2s ease both;
+}
+
+@keyframes rs-fadeDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── CARDS ─── */
+.rs-cards {
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rs-card-wrap {
+  opacity: 0;
+  transform: translateX(-40px);
+  animation: rs-slideIn 0.6s ease forwards;
+}
+
+.rs-card-wrap:nth-child(1) { animation-delay: 0.3s; }
+.rs-card-wrap:nth-child(2) { animation-delay: 0.45s; }
+.rs-card-wrap:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes rs-slideIn {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.rs-card-outer {
+  position: relative;
+  border-radius: 20px;
+  padding: 1.5px;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.rs-card-outer:hover { transform: translateY(-2px); }
+.rs-card-outer:active { transform: scale(0.99); }
+
+.rs-card-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.rs-card-outer:hover .rs-card-border,
+.rs-card-outer.selected .rs-card-border { opacity: 1; }
+
+.rs-card-inner {
+  position: relative;
+  border-radius: 19px;
+  overflow: hidden;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  background: #0C1120;
+  border: 1px solid rgba(255,255,255,0.05);
+  transition: border-color 0.4s;
+}
+
+.rs-card-outer:hover .rs-card-inner,
+.rs-card-outer.selected .rs-card-inner { border-color: transparent; }
+
+.rs-orb {
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+
+.rs-card-outer:hover .rs-orb,
+.rs-card-outer.selected .rs-orb { opacity: 0.5; }
+
+/* icon */
+.rs-icon-wrap {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.rs-card-outer:hover .rs-icon-wrap { transform: scale(1.08) rotate(4deg); }
+.rs-icon-wrap svg { width: 32px; height: 32px; stroke-width: 1.5; }
+
+/* content */
+.rs-card-content { flex: 1; min-width: 0; }
+.rs-card-head { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.rs-card-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: #fff; }
+
+.rs-pill {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+.rs-exclusive {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  text-transform: uppercase;
+}
+
+.rs-card-desc {
+  font-size: 14px;
+  color: rgba(148,163,184,0.75);
+  line-height: 1.65;
+  margin-bottom: 16px;
+  font-weight: 300;
+  max-width: 520px;
+}
+
+.rs-features { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.rs-feat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(203,213,225,0.7);
+  transition: all 0.3s ease;
+}
+
+.rs-card-outer:hover .rs-feat {
+  background: rgba(255,255,255,0.07);
+  color: rgba(203,213,225,0.95);
+}
+
+.rs-feat-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* arrow */
+.rs-arrow-wrap {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.3s ease;
+}
+
+.rs-card-outer:hover .rs-arrow-wrap,
+.rs-card-outer.selected .rs-arrow-wrap { border-color: transparent; }
+.rs-arrow-wrap svg { width: 20px; height: 20px; transition: transform 0.3s ease; }
+.rs-card-outer:hover .rs-arrow-wrap svg { transform: translateX(3px); }
+
+/* selected underline */
+.rs-sel-line {
+  height: 2px;
+  border-radius: 2px;
+  margin: 6px 20px 0;
+  opacity: 0;
+  transform: scaleX(0);
+  transition: opacity 0.4s, transform 0.4s ease;
+}
+
+.rs-card-outer.selected .rs-sel-line { opacity: 1; transform: scaleX(1); }
+
+/* ─── CONFIRM BUTTON ─── */
+.rs-confirm-wrap {
+  margin-top: 40px;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.rs-confirm-wrap.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.rs-confirm-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 40px;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  transition: transform 0.2s ease, box-shadow 0.3s;
+}
+
+.rs-confirm-btn:hover { transform: translateY(-2px); }
+.rs-confirm-btn:active { transform: scale(0.97); }
+.rs-confirm-btn span { position: relative; z-index: 1; }
+.rs-confirm-btn svg {
+  position: relative;
+  z-index: 1;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.3s;
+}
+
+.rs-confirm-btn:hover svg { transform: translateX(4px); }
+
+.rs-btn-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.12) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.rs-confirm-btn:hover .rs-btn-shine { transform: translateX(100%); }
