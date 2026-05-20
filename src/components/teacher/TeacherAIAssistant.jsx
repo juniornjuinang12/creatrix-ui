@@ -10,7 +10,7 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
 // Clé OpenAI fournie
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const API_KEY = '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';
 const SYSTEM_PROMPT = `Tu es Creatix AI, un assistant éducatif propulsé par l'IA créé pour la plateforme Creatix. Ton rôle est d'aider les enseignants à préparer leurs cours, générer des idées, corriger des textes et proposer des activités pédagogiques innovantes. Réponds toujours de manière professionnelle, encourageante et concise.
 IMPORTANT MATHÉMATIQUES : Tu DOIS écrire TOUTES les équations et formules mathématiques en format LaTeX en utilisant le délimiteur $ pour les équations en ligne (ex: $x=2$) et $$ pour les blocs d'équations (ex: $$x^2=4$$). N'utilise JAMAIS les crochets \\[ ou \\] ou les parenthèses \\( ou \\) pour délimiter les mathématiques !
 IMPORTANT IMAGES ET GRAPHIQUES : Tu es capable de générer visuellement tout ce que l'utilisateur demande.
@@ -71,16 +71,16 @@ const MessageBubble = memo(forwardRef(({ msg, isUser }, ref) => {
     >
       {/* Avatar */}
       <div className={`shrink-0 w-8 h-8 rounded-xl flex items-center justify-center shadow-md ${isUser
-          ? 'bg-slate-700 border border-slate-600'
-          : 'bg-gradient-to-br from-fuchsia-500 to-indigo-600 border border-fuchsia-400/30'
+        ? 'bg-slate-700 border border-slate-600'
+        : 'bg-gradient-to-br from-fuchsia-500 to-indigo-600 border border-fuchsia-400/30'
         }`}>
         {isUser ? <User className="w-4 h-4 text-white" /> : <Bot className="w-4 h-4 text-white" />}
       </div>
 
       {/* Message Bubble */}
       <div className={`p-4 sm:p-5 rounded-[24px] relative max-w-[85%] ${isUser
-          ? 'bg-white/10 border border-white/10 text-white rounded-tr-sm backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.15)]'
-          : 'bg-[#0B0F19]/40 border border-fuchsia-500/10 text-slate-200 rounded-tl-sm backdrop-blur-md shadow-lg'
+        ? 'bg-white/10 border border-white/10 text-white rounded-tr-sm backdrop-blur-md shadow-[0_10px_30px_rgba(0,0,0,0.15)]'
+        : 'bg-[#0B0F19]/40 border border-fuchsia-500/10 text-slate-200 rounded-tl-sm backdrop-blur-md shadow-lg'
         }`}>
         {msg.image && (
           <img src={msg.image} alt="Upload utilisateur" className="max-w-full sm:max-w-sm rounded-xl mb-3 shadow-md" />

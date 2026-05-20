@@ -8,7 +8,7 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
 // Clé OpenAI fournie
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const API_KEY = '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';
 
 export default function TeacherToolSummary() {
   const navigate = useNavigate();

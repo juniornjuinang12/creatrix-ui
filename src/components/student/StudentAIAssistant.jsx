@@ -9,7 +9,8 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
+const API_KEY = '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';
+
 const SYSTEM_PROMPT = `Tu es Creatix AI, un tuteur éducatif propulsé par l'IA créé pour la plateforme Creatix. Ton rôle est d'aider les élèves à comprendre leurs cours, résoudre des problèmes, et apprendre de manière interactive. Réponds toujours de manière pédagogique, encourageante et concise.
 IMPORTANT MATHÉMATIQUES : Tu DOIS écrire TOUTES les équations et formules mathématiques en format LaTeX en utilisant le délimiteur $ pour les équations en ligne (ex: $x=2$) et $$ pour les blocs d'équations (ex: $$x^2=4$$). N'utilise JAMAIS les crochets \\[ ou \\] ou les parenthèses \\( ou \\) pour délimiter les mathématiques !
 IMPORTANT IMAGES ET GRAPHIQUES : Tu es capable de générer visuellement tout ce que l'utilisateur demande.
