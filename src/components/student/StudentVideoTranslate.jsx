@@ -10,7 +10,16 @@ export default function StudentVideoTranslate() {
   const [targetLanguage, setTargetLanguage] = useState('en');
   const [isTranslating, setIsTranslating] = useState(false);
   const [translatedVideoUrl, setTranslatedVideoUrl] = useState(null);
+  const [originalVideoUrl, setOriginalVideoUrl] = useState(null);
   const fileInputRef = useRef(null);
+
+  // Mapping des vidéos pour le Mode Démo
+  const demoVideosMapping = {
+    "Video ted2.mp4": "/demo/translated_fr_1779318296561.mp4",
+    "What Is The Meaning Of LIFE_ - Elon Musk.mp4.mp4": "/demo/translated_fr_1779315881281.mp4",
+    "Barack Obama's speech to graduates.mp4.mp4": "/demo/translated_fr_1779316285518 (1).mp4",
+    "vid2.mp4": "/demo/traduction_fr.mp4"
+  };
 
   const languages = [
     { code: 'fr', name: 'Français' },
@@ -23,7 +32,9 @@ export default function StudentVideoTranslate() {
 
   const handleFileSelect = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setVideoFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setVideoFile(file);
+      setOriginalVideoUrl(URL.createObjectURL(file));
     }
   };
 
@@ -33,6 +44,36 @@ export default function StudentVideoTranslate() {
 
     setIsTranslating(true);
     
+    // ==========================================
+    // INTERCEPTION MODE DÉMO POUR LA SOUTENANCE
+    // ==========================================
+    if (demoVideosMapping[videoFile.name] && targetLanguage === 'fr') {
+      try {
+        // Simulation d'attente pour faire illusion (4 secondes)
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        
+        const newMediaUrl = demoVideosMapping[videoFile.name];
+        
+        // Sauvegarder dans l'historique quand même
+        if (currentUser) {
+          await supabase.from('translated_videos').insert([{
+            userId: currentUser.uid,
+            originalName: videoFile.name,
+            videoUrl: newMediaUrl,
+            language: targetLanguage
+          }]);
+        }
+        
+        setTranslatedVideoUrl(newMediaUrl);
+      } catch (err) {
+        console.error("Erreur mode démo:", err);
+      } finally {
+        setIsTranslating(false);
+      }
+      return; // Fin de la fonction (ne pas appeler ElevenLabs)
+    }
+    // ==========================================
+
     try {
       const apiKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
       
@@ -120,22 +161,36 @@ export default function StudentVideoTranslate() {
             {/* Upload Vidéo */}
             <div>
               <label className="block text-sm font-bold text-slate-300 mb-3">Vidéo Originale</label>
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className={`w-full h-40 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all ${videoFile ? 'border-fuchsia-500 bg-fuchsia-500/10' : 'border-white/20 hover:border-fuchsia-500/50 hover:bg-white/5'}`}
-              >
-                {/* State without file */}
-                <div className={`flex-col items-center justify-center ${videoFile ? 'hidden' : 'flex'}`}>
+              
+              {!videoFile ? (
+                <div 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full h-40 border-2 border-dashed border-white/20 hover:border-fuchsia-500/50 hover:bg-white/5 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all"
+                >
                   <Upload className="w-10 h-10 text-slate-500 mb-2" />
                   <span className="text-slate-400 font-medium text-center">Cliquez pour uploader une vidéo (MP4)</span>
                 </div>
-                
-                {/* State with file */}
-                <div className={`flex-col items-center justify-center ${videoFile ? 'flex' : 'hidden'}`}>
-                  <Video className="w-10 h-10 text-fuchsia-400 mb-2" />
-                  <span className="text-white font-medium text-center px-4">{videoFile ? videoFile.name : ''}</span>
+              ) : (
+                <div className="w-full rounded-2xl border border-white/10 bg-[#0B0F19] overflow-hidden flex flex-col">
+                  <div className="w-full relative aspect-video bg-black">
+                    <video src={originalVideoUrl} controls className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-3 flex justify-between items-center bg-white/5">
+                     <span className="text-slate-300 text-xs font-medium truncate max-w-[70%]">{videoFile.name}</span>
+                     <button 
+                       type="button"
+                       onClick={(e) => {
+                         e.preventDefault();
+                         fileInputRef.current?.click();
+                       }}
+                       className="text-xs font-bold text-fuchsia-400 hover:text-fuchsia-300 px-2 py-1 rounded bg-fuchsia-500/10"
+                     >
+                       Changer
+                     </button>
+                  </div>
                 </div>
-              </div>
+              )}
+
               <input type="file" ref={fileInputRef} onChange={handleFileSelect} accept="video/*" className="hidden" />
             </div>
 

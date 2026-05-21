@@ -126,6 +126,7 @@ function App() {
             <Route path="class/:classId" element={<TeacherClassView />} />
             <Route path="resources" element={<TeacherResources />} />
             <Route path="tools/summary" element={<TeacherToolSummary />} />
+            <Route path="tools/video-translate" element={<StudentVideoTranslate />} />
           </Route>
 
           {/* Espace Élève (Protégé) */}

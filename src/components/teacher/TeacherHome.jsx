@@ -383,6 +383,7 @@ export default function TeacherHome() {
                       onClick={(e) => {
                         e.stopPropagation();
                         if (tool.id === 'summary') navigate('/teacher/tools/summary');
+                        if (tool.id === 'translate') navigate('/teacher/tools/video-translate');
                       }}
                       className="text-sm font-bold text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-xl transition-colors"
                     >

@@ -7,8 +7,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 
-// Clé OpenAI fournie
-const API_KEY = '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';
+const API_KEY = import.meta.env.VITE_OPENAI_API_KEY;
 
 export default function TeacherToolSummary() {
   const navigate = useNavigate();
@@ -82,7 +81,18 @@ Ton résumé doit inclure :
 3. Les concepts clés sous forme de liste à puces.
 4. Un plan détaillé ou les chapitres principaux abordés.
 5. 3 idées de questions de Quiz (QCM) pour vérifier la compréhension des élèves.
-Réponds avec un beau formatage Markdown, utilise des émojis pertinents, du gras et des titres.`;
+Réponds avec un beau formatage Markdown, utilise des émojis pertinents, du gras et des titres.
+
+IMPORTANT MATHÉMATIQUES : Tu DOIS écrire TOUTES les équations et formules mathématiques en format LaTeX en utilisant le délimiteur $ pour les équations en ligne (ex: $x=2$) et $$ pour les blocs d'équations (ex: $$x^2=4$$). N'utilise JAMAIS les crochets \\[ ou \\] ou les parenthèses \\( ou \\) pour délimiter les mathématiques !
+
+IMPORTANT IMAGES ET GRAPHIQUES : Tu es capable de générer visuellement tout ce que l'utilisateur demande.
+1. Pour générer des IMAGES (photos, dessins, affiches), tu DOIS obligatoirement insérer une image Markdown (avec le point d'exclamation ! au début).
+Format exact : ![Image](https://image.pollinations.ai/prompt/la-description-en-anglais-separee-par-des-tirets?width=800&height=600&nologo=true)
+N'oublie JAMAIS le point d'exclamation ! au début. Ne fais pas de lien classique.
+2. Pour TRACER LA COURBE D'UNE FONCTION mathématique, calcule toi-même quelques points (par exemple de -5 à 5) et génère un graphique précis via QuickChart en Markdown (toujours avec le !).
+Exemple exact pour f(x)=x^2 :
+![Courbe de f(x)](https://quickchart.io/chart?c={type:'line',data:{labels:[-3,-2,-1,0,1,2,3],datasets:[{label:'f(x)=x^2',data:[9,4,1,0,1,4,9],borderColor:'blue',fill:false}]}})
+Adapte les 'labels' (les x) et les 'data' (les y) pour correspondre à la fonction demandée.`;
 
           // 3. Envoyer le document et le prompt à l'API OpenAI
           const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -311,7 +321,7 @@ Réponds avec un beau formatage Markdown, utilise des émojis pertinents, du gra
                       strong: ({ node, ...props }) => <strong className="font-bold text-white bg-fuchsia-500/10 px-1 rounded" {...props} />,
                     }}
                   >
-                    {summary}
+                    {summary.replace(/\\\[/g, '$$$$').replace(/\\\]/g, '$$$$').replace(/\\\(/g, '$').replace(/\\\)/g, '$')}
                   </ReactMarkdown>
                 </motion.div>
               )}
